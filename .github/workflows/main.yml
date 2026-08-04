@@ -1,1 +1,34 @@
 
+name: Run News Bot
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Run script
+        run: python3 bot.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "News Bot"
+          git config --global user.email "bot@users.noreply.github.com"
+          git add -A
+          git commit -m "Update bot state [skip ci]" || exit 0
+          git push || true
